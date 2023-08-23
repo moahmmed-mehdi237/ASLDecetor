@@ -5,6 +5,7 @@ import numpy as np
 from cvzone.HandTrackingModule import HandDetector
 from cvzone.ClassificationModule import Classifier
 import tensorflow
+from threading import Thread
 import time
 from transformers import pipeline
 
@@ -70,8 +71,12 @@ def run_model():
                 cur_time = time.time()
                 print(labels[index])
                 text +=labels[index]
+
         cv2.imshow('Image', img)
-        key = cv2.waitKey(1)
+        cv2.waitKey(1)
+        print(recording)
+
+    print(recording)
     return text
 
 def stop():
@@ -79,6 +84,10 @@ def stop():
     global text
     recording = False
     print(recording)
+    return text
+
+def text_show():
+    global text
     return text
 
 def correct(text):
@@ -93,7 +102,10 @@ with gr.Blocks() as dmeo:
         correct_btn = gr.Button('correct')
     correction = gr.Text(label='did you mean?')
 
-    read_btn.click(fn =run_model , inputs=[] , outputs = output)
-    stop_btn.click (fn = stop , inputs = [] , outputs=[output])
+    read_btn.click(fn =run_model , inputs=[] , outputs = [])
+    stop_btn.click(fn = stop , inputs = [] , outputs=[output])
     correct_btn.click(fn = correct , inputs=[output] , outputs = [correction])
-dmeo.launch()
+    dmeo.load(fn=text_show, inputs=[], outputs=[output], every=1)
+
+
+dmeo.queue().launch()
