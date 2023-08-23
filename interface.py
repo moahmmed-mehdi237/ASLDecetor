@@ -13,6 +13,9 @@ fix_spelling = pipeline("text2text-generation",model="oliverguhr/spelling-correc
 text = ""
 recording = False
 labels = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',' ']
+
+
+
 def run_model():
     global text
     global recording
@@ -25,6 +28,7 @@ def run_model():
     classifier = Classifier('E:\ASLDecetor\\new_model\keras_model.h5', labelsPath='E:\ASLDecetor\\new_model\labels.txt')
 
     recording = True
+    global cur_time
     cur_time = time.time()
     while recording:
         success, img = cap.read()
@@ -74,6 +78,7 @@ def stop():
     global recording
     global text
     recording = False
+    print(recording)
     return text
 
 def correct(text):
@@ -81,7 +86,7 @@ def correct(text):
     return corrected_text
 
 with gr.Blocks() as dmeo:
-    output = gr.Text(label='output')
+    output = gr.Label(label='output')
     with gr.Row():
         read_btn = gr.Button('read')
         stop_btn = gr.Button('stop')
